@@ -1,0 +1,27 @@
+[package]
+name = "doip-rs-cli"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+authors = ["Alexis Lowe <alexis.lowe@chimbosonic.com>"]
+description = "CLI interface to Keyoxide's doip-rs Library."
+repository = "https://github.com/chimbosonic/cli-kneeboard"
+keywords = ["openpgp", "cli", "keyoxide", "doip"]
+
+[dependencies]
+clap = { version = "4.1.8", features = ["derive"] }
+display_json = "0.2.1"
+doip = { git = "https://codeberg.org/keyoxide/doip-rs.git", branch = "dev", version = "0.1.0" }
+miette = { version = "5.5.0", features = ["fancy"] }
+sequoia-openpgp = "1.13.0"
+serde = "1.0.153"
+serde_json = "1.0.94"
+thiserror = "1.0.39"
+tokio = "1.26.0"
+
+[profile.release]
+opt-level = 3
+strip = "debuginfo"
+lto = true
+panic = "abort"
+debug = false
