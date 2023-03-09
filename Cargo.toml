@@ -1,11 +1,10 @@
 [package]
-name = "doip-rs-cli"
+name = "keyoxide-cli"
 version = "0.1.0"
 edition = "2021"
 license = "MIT"
 authors = ["Alexis Lowe <alexis.lowe@chimbosonic.com>"]
 description = "CLI interface to Keyoxide's doip-rs Library."
-repository = "https://github.com/chimbosonic/cli-kneeboard"
 keywords = ["openpgp", "cli", "keyoxide", "doip"]
 
 [dependencies]

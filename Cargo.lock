@@ -402,21 +402,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "doip-rs-cli"
-version = "0.1.0"
-dependencies = [
- "clap",
- "display_json",
- "doip",
- "miette",
- "sequoia-openpgp",
- "serde 1.0.153",
- "serde_json",
- "thiserror",
- "tokio",
-]
-
-[[package]]
 name = "dyn-clone"
 version = "1.0.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -894,6 +879,21 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "445dde2150c55e483f3d8416706b97ec8e8237c307e5b7b4b8dd15e6af2a0730"
 dependencies = [
  "wasm-bindgen",
+]
+
+[[package]]
+name = "keyoxide-cli"
+version = "0.1.0"
+dependencies = [
+ "clap",
+ "display_json",
+ "doip",
+ "miette",
+ "sequoia-openpgp",
+ "serde 1.0.153",
+ "serde_json",
+ "thiserror",
+ "tokio",
 ]
 
 [[package]]
