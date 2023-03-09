@@ -1,0 +1,27 @@
+[about]
+name = "Owncast"
+shortname = "owncast"
+homepage = "https://owncast.online"
+
+[profile]
+display = "{claim_uri_1}"
+uri = "https://{claim_uri_1}"
+
+[claim]
+uri = '^https://(.*)/?'
+uri_is_ambiguous = true
+
+[proof]
+
+[proof.request]
+uri = "https://{claim_uri_1}/api/config"
+protocol = "http"
+access_restrictions = "none"
+
+[proof.response]
+format = "json"
+
+[proof.target]
+format = "fingerprint"
+relation = "contains"
+path = ["socialHandles", "url"]

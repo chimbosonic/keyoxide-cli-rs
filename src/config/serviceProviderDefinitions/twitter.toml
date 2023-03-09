@@ -1,0 +1,27 @@
+[about]
+name = "Twitter"
+shortname = "twitter"
+homepage = "https://twitter.com"
+
+[profile]
+display = "@{claim_uri_1}"
+uri = "https://twitter.com/{claim_uri_1}/status/{claim_uri_2}"
+
+[claim]
+uri = '^https://twitter.com/(.*)/status/([0-9]*)(?:\?.*)?'
+uri_is_ambiguous = false
+
+[proof]
+
+[proof.request]
+uri = "https://twitter.com/{claim_uri_1}/status/{claim_uri_2}"
+protocol = "http"
+access_restrictions = "none"
+
+[proof.response]
+format = "plaintext"
+
+[proof.target]
+format = "fingerprint"
+relation = "contains"
+path = []

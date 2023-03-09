@@ -1,0 +1,27 @@
+[about]
+name = "Lobsters"
+shortname = "lobsters"
+homepage = "https://lobste.rs"
+
+[profile]
+display = "{claim_uri_1}"
+uri = "https://lobste.rs/u/{claim_uri_1}"
+
+[claim]
+uri = '^https://lobste.rs/u/(.*)/?'
+uri_is_ambiguous = false
+
+[proof]
+
+[proof.request]
+uri = "https://lobste.rs/u/{claim_uri_1}.json"
+protocol = "http"
+access_restrictions = "none"
+
+[proof.response]
+format = "json"
+
+[proof.target]
+format = "uri"
+relation = "contains"
+path = ["about"]

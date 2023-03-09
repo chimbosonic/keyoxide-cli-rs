@@ -2,11 +2,14 @@
   "fingerprint": "EB85BB5FA33A75E15E944E63F231550C4F47E38E",
   "user_id_proofs": [
     {
-      "userid": "Alice Lovelace alice@openpgp.example",
+      "userid": "Alice Lovelace <alice@openpgp.example>",
       "proofs": [
         {
           "uri": "dns:openpgp.example?type=TXT",
-          "verified": false
+          "verification_result": {
+            "result": false,
+            "proxy_used": null
+          }
         }
       ]
     }

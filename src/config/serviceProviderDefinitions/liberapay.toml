@@ -1,0 +1,27 @@
+[about]
+name = "Liberapay"
+shortname = "liberapay"
+homepage = "https://liberapay.com"
+
+[profile]
+display = "{claim_uri_1}"
+uri = "https://liberapay.com/{claim_uri_1}"
+
+[claim]
+uri = '^https://liberapay.com/(.*)/?'
+uri_is_ambiguous = false
+
+[proof]
+
+[proof.request]
+uri = "https://liberapay.com/{claim_uri_1}/public.json"
+protocol = "http"
+access_restrictions = "none"
+
+[proof.response]
+format = "json"
+
+[proof.target]
+format = "uri"
+relation = "contains"
+path = ["statements", "content"]

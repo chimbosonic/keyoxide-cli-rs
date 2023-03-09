@@ -1,0 +1,27 @@
+[about]
+name = "GitHub"
+shortname = "github"
+homepage = "https://github.com"
+
+[profile]
+display = "{claim_uri_1}"
+uri = "https://github.com/{claim_uri_1}"
+
+[claim]
+uri = '^https://gist.github.com/(.*)/(.*)/?'
+uri_is_ambiguous = false
+
+[proof]
+
+[proof.request]
+uri = "https://api.github.com/gists/{claim_uri_2}"
+protocol = "http"
+access_restrictions = "none"
+
+[proof.response]
+format = "json"
+
+[proof.target]
+format = "uri"
+relation = "contains"
+path = ["files", "openpgp.md", "content"]

@@ -1,6 +1,9 @@
 use clap::Parser;
 use display_json::{DebugAsJsonPretty, DisplayAsJson};
-use doip::keys::openpgp::{fetch_hkp, fetch_wkd, get_keys_doip_proofs, read_key_from_string};
+use doip::{
+    claim::{Claim, VerificationResult},
+    keys::openpgp::{fetch_hkp, fetch_wkd, get_keys_doip_proofs, read_key_from_string},
+};
 use miette::{Diagnostic, Result};
 use sequoia_openpgp::Cert;
 use serde::Serialize;
@@ -161,7 +164,7 @@ struct UserIDVerifiedProofs {
 #[derive(Serialize)]
 struct VerifiedProof {
     uri: String,
-    verified: bool,
+    verification_result: Option<VerificationResult>,
 }
 
 #[allow(clippy::mutable_key_type)]
@@ -185,9 +188,14 @@ async fn verify_doip_proofs_and_print_results(certs: Vec<Cert>, pretty_print: bo
                     };
 
                     for proof in proofs {
+                        let mut claim =
+                            Claim::new(proof.clone(), key_verified_proofs.fingerprint.clone());
+                        claim.find_match();
+                        claim.verify().await;
+                        #[allow(clippy::map_clone, clippy::redundant_clone)]
                         verified_proofs.proofs.push(VerifiedProof {
                             uri: proof,
-                            verified: false,
+                            verification_result: claim.get_verification_result().map(|t| t.clone()),
                         });
                     }
 

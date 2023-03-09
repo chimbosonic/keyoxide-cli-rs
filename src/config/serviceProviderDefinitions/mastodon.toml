@@ -1,0 +1,27 @@
+[about]
+name = "Mastodon"
+shortname = "mastodon"
+homepage = "https://joinmastodon.org"
+
+[profile]
+display = "@{claim_uri_2}@{claim_uri_1}"
+uri = "https://{claim_uri_1}/@{claim_uri_2}"
+
+[claim]
+uri = '^https://(.*)/@(.*)/?'
+uri_is_ambiguous = true
+
+[proof]
+
+[proof.request]
+uri = "https://{claim_uri_1}/@{claim_uri_2}"
+protocol = "http"
+access_restrictions = "none"
+
+[proof.response]
+format = "json"
+
+[proof.target]
+format = "fingerprint"
+relation = "contains"
+path = ["attachment", "value"]

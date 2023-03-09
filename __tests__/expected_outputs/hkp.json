@@ -1,14 +1,17 @@
 {
-    "fingerprint": "3637202523E7C1309AB79E99EF2DC5827B445F4B",
-    "user_id_proofs": [
-      {
-        "userid": "Yarmo Mackenbach test@doip.rocks",
-        "proofs": [
-          {
-            "uri": "dns:doip.rocks",
-            "verified": false
+  "fingerprint": "3637202523E7C1309AB79E99EF2DC5827B445F4B",
+  "user_id_proofs": [
+    {
+      "userid": "Yarmo Mackenbach <test@doip.rocks>",
+      "proofs": [
+        {
+          "uri": "dns:doip.rocks",
+          "verification_result": {
+            "result": false,
+            "proxy_used": null
           }
-        ]
-      }
-    ]
+        }
+      ]
+    }
+  ]
 }

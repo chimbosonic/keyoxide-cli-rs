@@ -1,0 +1,27 @@
+[about]
+name = "Reddit"
+shortname = "reddit"
+homepage = "https://www.reddit.com"
+
+[profile]
+display = "{claim_uri_1}"
+uri = "https://www.reddit.com/user/{claim_uri_1}"
+
+[claim]
+uri = '^https://(?:www.)?reddit.com/user/(.*)/comments/(.*)/(.*)/?'
+uri_is_ambiguous = false
+
+[proof]
+
+[proof.request]
+uri = "https://www.reddit.com/user/{claim_uri_1}/comments/{claim_uri_2}.json"
+protocol = "http"
+access_restrictions = "none"
+
+[proof.response]
+format = "json"
+
+[proof.target]
+format = "uri"
+relation = "contains"
+path = ["data", "children", "data", "selftext"]
