@@ -177,7 +177,7 @@ async fn verify_doip_proofs_and_print_results(certs: Vec<Cert>, pretty_print: bo
                 for (user_id, proofs) in doip_proofs {
                     let user_id_name = user_id.name().unwrap_or(None).unwrap_or("".to_string());
                     let user_id_email = user_id.email().unwrap_or(None).unwrap_or("".to_string());
-                    let user_id_string = format!("{user_id_name} {user_id_email}");
+                    let user_id_string = format!("{user_id_name} <{user_id_email}>");
 
                     let mut verified_proofs = UserIDVerifiedProofs {
                         userid: user_id_string,
@@ -192,6 +192,9 @@ async fn verify_doip_proofs_and_print_results(certs: Vec<Cert>, pretty_print: bo
                     }
 
                     key_verified_proofs.user_id_proofs.push(verified_proofs);
+                    key_verified_proofs
+                        .user_id_proofs
+                        .sort_by(|a, b| b.userid.cmp(&a.userid));
                 }
                 if pretty_print {
                     println!("{key_verified_proofs:?}");
