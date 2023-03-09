@@ -3,6 +3,7 @@
 CAUTION THIS IS A WORK IN PROGRESS AND COULD END UP MOVING
 
 CLI interface to doip-rs library written in rust.
+Currently this uses `doip = { git = "https://codeberg.org/chimbosonic/doip-rs.git", branch = "fixClaimsForCLI", version = "0.1.0" }`
 
 ## Install
 Clone the repo and run the following from the repo's root:
@@ -11,6 +12,9 @@ cargo install --path .
 ```
 
 ## Usage
+Currently to run verification you need `src/config/serviceProviderDefinitions` in your path from where you execute the tool.
+This is due to how serviceProviders are defined this will soon be fixed.
+
 ```bash
 keyoxide --help
 CLI interface to Keyoxide's doip-rs Library.
