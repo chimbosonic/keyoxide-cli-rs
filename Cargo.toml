@@ -1,10 +1,10 @@
 [package]
-name = "keyoxide-cli"
+name = "keyoxide-cli-rs"
 version = "0.1.0"
 edition = "2021"
 license = "MIT"
 authors = ["Alexis Lowe <alexis.lowe@chimbosonic.com>"]
-description = "CLI interface to Keyoxide's doip-rs Library."
+description = "CLI interface to doip-rs library."
 keywords = ["openpgp", "cli", "keyoxide", "doip"]
 
 [dependencies]
@@ -17,6 +17,10 @@ serde = "1.0.153"
 serde_json = "1.0.94"
 thiserror = "1.0.39"
 tokio = "1.26.0"
+
+[[bin]]
+name = "keyoxide"
+path = "src/main.rs"
 
 [profile.release]
 opt-level = 3

@@ -1,15 +1,21 @@
-# doip-rs-cli (WIP)
+# keyoxide-cli-rs (WIP)
 
 CAUTION THIS IS A WORK IN PROGRESS AND COULD END UP MOVING
 
-CLI interface to Keyoxide's doip-rs Library.
+CLI interface to doip-rs library written in rust.
+
+## Install
+Clone the repo and run the following from the repo's root:
+```bash
+cargo install --path .
+```
 
 ## Usage
 ```bash
-cargo run -- --help
+keyoxide --help
 CLI interface to Keyoxide's doip-rs Library.
 
-Usage: doip-rs-cli [OPTIONS]
+Usage: keyoxide-cli [OPTIONS]
 
 Options:
   -f, --fetch-key-uri <FETCH_KEY_URI>
