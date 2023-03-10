@@ -3,7 +3,7 @@
 CAUTION THIS IS A WORK IN PROGRESS AND COULD END UP MOVING
 
 CLI interface to doip-rs library written in rust.
-Currently this uses `doip = { git = "https://codeberg.org/chimbosonic/doip-rs.git", branch = "fixClaimsForCLI", version = "0.1.0" }`
+Currently this uses `doip = { git = "https://codeberg.org/keyoxide/doip-rs.git", branch = "dev", version = "0.1.0" }`
 
 ## Install
 Clone the repo and run the following from the repo's root:

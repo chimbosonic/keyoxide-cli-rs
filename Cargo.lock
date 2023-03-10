@@ -385,7 +385,7 @@ dependencies = [
 [[package]]
 name = "doip"
 version = "0.1.0"
-source = "git+https://codeberg.org/chimbosonic/doip-rs.git?branch=fixClaimsForCLI#7fcb6b2137be061d6646447c87e8eaf05482642e"
+source = "git+https://codeberg.org/keyoxide/doip-rs.git?branch=dev#7fcb6b2137be061d6646447c87e8eaf05482642e"
 dependencies = [
  "async-trait",
  "config",
