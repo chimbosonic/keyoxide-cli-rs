@@ -1,0 +1,135 @@
+{
+  "fingerprint": "AC48BC1F029B6188D97E2D807C855DB4466DF0C6",
+  "user_id_proofs": [
+    {
+      "userid": "Alexis Lowe <alexis.lowe@protonmail.com>",
+      "proofs": [
+        {
+          "uri": "matrix:u/@chimbosonic_1:matrix.org?org.keyoxide.r=!dBfQZxCoGVmSTujfiv:matrix.org&org.keyoxide.e=$9mdcf9qT7lEuAd1jbNrY6ogBVWpM2e7d6Ta_GWFEOwo",
+          "verification_result": null
+        },
+        {
+          "uri": "https://news.ycombinator.com/user?id=chimbosonic",
+          "verification_result": {
+            "result": true,
+            "service_provider_info": {
+              "name": "Hacker News",
+              "shortname": "hackernews",
+              "homepage": "https://news.ycombinator.com"
+            },
+            "proxy_used": null
+          }
+        },
+        {
+          "uri": "dns:raphael.digital?type=TXT",
+          "verification_result": {
+            "result": true,
+            "service_provider_info": {
+              "name": "DNS",
+              "shortname": "dns",
+              "homepage": null
+            },
+            "proxy_used": null
+          }
+        },
+        {
+          "uri": "https://fosstodon.org/@chimbosonic",
+          "verification_result": {
+            "result": true,
+            "service_provider_info": {
+              "name": "Mastodon",
+              "shortname": "mastodon",
+              "homepage": "https://joinmastodon.org"
+            },
+            "proxy_used": null
+          }
+        },
+        {
+          "uri": "dns:chimbosonic.com?type=TXT",
+          "verification_result": {
+            "result": true,
+            "service_provider_info": {
+              "name": "DNS",
+              "shortname": "dns",
+              "homepage": null
+            },
+            "proxy_used": null
+          }
+        },
+        {
+          "uri": "https://gist.github.com/chimbosonic/acded97e87889c2440366550253b812f",
+          "verification_result": null
+        },
+        {
+          "uri": "https://twitter.com/chimbosonic/status/1625087893516480512",
+          "verification_result": null
+        }
+      ]
+    },
+    {
+      "userid": "Alexis Lowe <alexis.lowe@chimbosonic.com>",
+      "proofs": [
+        {
+          "uri": "matrix:u/@chimbosonic_1:matrix.org?org.keyoxide.r=!dBfQZxCoGVmSTujfiv:matrix.org&org.keyoxide.e=$9mdcf9qT7lEuAd1jbNrY6ogBVWpM2e7d6Ta_GWFEOwo",
+          "verification_result": null
+        },
+        {
+          "uri": "https://news.ycombinator.com/user?id=chimbosonic",
+          "verification_result": {
+            "result": true,
+            "service_provider_info": {
+              "name": "Hacker News",
+              "shortname": "hackernews",
+              "homepage": "https://news.ycombinator.com"
+            },
+            "proxy_used": null
+          }
+        },
+        {
+          "uri": "dns:raphael.digital?type=TXT",
+          "verification_result": {
+            "result": true,
+            "service_provider_info": {
+              "name": "DNS",
+              "shortname": "dns",
+              "homepage": null
+            },
+            "proxy_used": null
+          }
+        },
+        {
+          "uri": "https://fosstodon.org/@chimbosonic",
+          "verification_result": {
+            "result": true,
+            "service_provider_info": {
+              "name": "Mastodon",
+              "shortname": "mastodon",
+              "homepage": "https://joinmastodon.org"
+            },
+            "proxy_used": null
+          }
+        },
+        {
+          "uri": "dns:chimbosonic.com?type=TXT",
+          "verification_result": {
+            "result": true,
+            "service_provider_info": {
+              "name": "DNS",
+              "shortname": "dns",
+              "homepage": null
+            },
+            "proxy_used": null
+          }
+        },
+        {
+          "uri": "https://gist.github.com/chimbosonic/acded97e87889c2440366550253b812f",
+          "verification_result": null
+        },
+        {
+          "uri": "https://twitter.com/chimbosonic/status/1625087893516480512",
+          "verification_result": null
+        }
+      ]
+    }
+  ]
+}

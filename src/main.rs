@@ -2,14 +2,19 @@ use clap::Parser;
 use display_json::{DebugAsJsonPretty, DisplayAsJson};
 use doip::{
     claim::{Claim, VerificationResult},
+    error::DoipError,
     keys::openpgp::{fetch_hkp, fetch_wkd, get_keys_doip_proofs, read_key_from_string},
+    service_provider::SPAbout,
 };
 use miette::{Diagnostic, Result};
+use miette::{IntoDiagnostic, ReportHandler};
 use sequoia_openpgp::Cert;
 use serde::Serialize;
-use std::{fs, io};
+use std::{
+    fmt, fs,
+    io::{self, prelude::*, stderr},
+};
 use thiserror::Error;
-
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about = None)]
 struct Args {
@@ -59,6 +64,41 @@ pub enum AppError {
     #[error("Sorry this code path is Unimplemented")]
     #[diagnostic(code(E0002))]
     FailedToReadKeyFile(#[from] io::Error),
+}
+
+#[derive(Error, Diagnostic, Debug)]
+#[error("Failed to verify {truncated_proof:?} for {userid:?} due to {doip_error:?}")]
+#[diagnostic(code(W0003), severity(Warning))]
+pub struct ProofError {
+    userid: String,
+    truncated_proof: String,
+    doip_error: DoipError,
+}
+
+impl ProofError {
+    pub fn warn_proof_errors(&self) {
+        writeln!(stderr(), "{}", DisplayDiagnostic(self))
+            .into_diagnostic()
+            .unwrap();
+    }
+
+    pub fn from(proof: String, userid: String, doip_error: DoipError) -> Self {
+        let mut truncated_proof = proof;
+        truncated_proof.truncate(30);
+
+        ProofError {
+            userid,
+            truncated_proof,
+            doip_error,
+        }
+    }
+}
+
+struct DisplayDiagnostic<'a>(&'a dyn miette::Diagnostic);
+impl fmt::Display for DisplayDiagnostic<'_> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        miette::GraphicalReportHandler::new().debug(self.0, f)
+    }
 }
 
 #[tokio::main]
@@ -127,7 +167,27 @@ struct UserIDVerifiedProofs {
 #[derive(Serialize)]
 struct VerifiedProof {
     uri: String,
-    verification_result: Option<VerificationResult>,
+    verification_result: Option<AppVerificationResult>,
+}
+
+#[derive(Serialize)]
+struct AppVerificationResult {
+    result: bool,
+    service_provider_info: Option<SPAbout>,
+    proxy_used: Option<String>,
+}
+
+impl From<VerificationResult> for AppVerificationResult {
+    fn from(verification_result: VerificationResult) -> Self {
+        AppVerificationResult {
+            result: verification_result.result,
+            service_provider_info: match verification_result.service_provider {
+                Some(service_provier) => Some(service_provier.about),
+                None => None,
+            },
+            proxy_used: verification_result.proxy_used,
+        }
+    }
 }
 
 #[allow(clippy::mutable_key_type)]
@@ -150,16 +210,30 @@ async fn verify_doip_proofs_and_print_results(certs: Vec<Cert>, pretty_print: bo
             };
 
             for proof in proofs {
-                let mut claim = Claim::new(proof.clone(), key_verified_proofs.fingerprint.clone());
-                claim.find_match();
-                claim.verify().await;
+                let claim = Claim::new(proof.clone(), key_verified_proofs.fingerprint.clone());
+                let verification_result: Option<VerificationResult> = match claim.find_matches() {
+                    Ok(matches) => claim
+                        .verify_with_matches(matches)
+                        .await
+                        .map_err(|error| {
+                            ProofError::from(proof.clone(), verified_proofs.userid.clone(), error)
+                                .warn_proof_errors();
+                            None::<VerificationResult>
+                        })
+                        .ok(),
+                    Err(error) => {
+                        ProofError::from(proof.clone(), verified_proofs.userid.clone(), error)
+                            .warn_proof_errors();
+                        None
+                    }
+                };
+
                 #[allow(clippy::map_clone, clippy::redundant_clone)]
                 verified_proofs.proofs.push(VerifiedProof {
-                    uri: proof,
-                    verification_result: claim.get_verification_result().map(|t| t.clone()),
+                    uri: proof.clone(),
+                    verification_result: verification_result.map(AppVerificationResult::from),
                 });
             }
-
             key_verified_proofs.user_id_proofs.push(verified_proofs);
             key_verified_proofs
                 .user_id_proofs

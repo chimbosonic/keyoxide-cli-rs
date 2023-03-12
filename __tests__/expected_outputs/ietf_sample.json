@@ -6,10 +6,7 @@
       "proofs": [
         {
           "uri": "dns:openpgp.example?type=TXT",
-          "verification_result": {
-            "result": false,
-            "proxy_used": null
-          }
+          "verification_result": null
         }
       ]
     }
