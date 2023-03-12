@@ -9,7 +9,7 @@ test_key_file:="$(test_dir)/data/IETF_SAMPLE_PUBLIC_KEY_WITH_NOTATIONS.asc"
 test_key_fingerprint:="3637202523E7C1309AB79E99EF2DC5827B445F4B"
 test_key_email_address:="test@doip.rocks"
 
-temp_test_file:=$(shell mktemp --suffix .json)
+temp_test_file:=$(shell mktemp)
 
 
 test: test-asc-file test-wkd test-hkp

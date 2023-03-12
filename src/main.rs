@@ -61,14 +61,6 @@ pub enum AppError {
     FailedToReadKeyFile(#[from] io::Error),
 }
 
-#[derive(Error, Diagnostic, Debug)]
-#[error("doip-rs had an error")]
-#[diagnostic(code(doip::generic))]
-pub struct GenericDoipError {
-    #[help]
-    doip_error_message: &'static str,
-}
-
 #[tokio::main]
 async fn main() -> Result<()> {
     let args = Args::parse();
@@ -97,33 +89,14 @@ async fn get_key_from_file_and_verify(key_path: String, pretty_print: bool) -> R
         Err(error) => Err(AppError::FailedToReadKeyFile(error).into()),
     };
 
-    let file_results = read_key_from_string(&file_contents?);
-    match file_results {
-        Ok(cert) => {
-            verify_doip_proofs_and_print_results(vec![cert], pretty_print).await?;
-        }
-        Err(error) => {
-            return Err(GenericDoipError {
-                doip_error_message: error,
-            }
-            .into())
-        }
-    }
+    let cert = read_key_from_string(&file_contents?)?;
+    verify_doip_proofs_and_print_results(vec![cert], pretty_print).await?;
     Ok(())
 }
 
 async fn get_key_via_wkd_and_verify(key_uri: String, pretty_print: bool) -> Result<()> {
-    match fetch_wkd(&key_uri[4..]).await {
-        Ok(certs) => {
-            verify_doip_proofs_and_print_results(certs, pretty_print).await?;
-        }
-        Err(error) => {
-            return Err(GenericDoipError {
-                doip_error_message: error,
-            }
-            .into())
-        }
-    }
+    let certs = fetch_wkd(&key_uri[4..]).await?;
+    verify_doip_proofs_and_print_results(certs, pretty_print).await?;
     Ok(())
 }
 
@@ -132,18 +105,8 @@ async fn get_key_via_hkp_and_verify(
     key_server: Option<String>,
     pretty_print: bool,
 ) -> Result<()> {
-    match fetch_hkp(&key_uri[4..], key_server.as_deref()).await {
-        Ok(certs) => {
-            verify_doip_proofs_and_print_results(certs, pretty_print).await?;
-        }
-        Err(error) => {
-            return Err(GenericDoipError {
-                doip_error_message: error,
-            }
-            .into());
-        }
-    }
-
+    let certs = fetch_hkp(&key_uri[4..], key_server.as_deref()).await?;
+    verify_doip_proofs_and_print_results(certs, pretty_print).await?;
     Ok(())
 }
 
@@ -170,52 +133,42 @@ struct VerifiedProof {
 #[allow(clippy::mutable_key_type)]
 async fn verify_doip_proofs_and_print_results(certs: Vec<Cert>, pretty_print: bool) -> Result<()> {
     for cert in certs {
-        match get_keys_doip_proofs(&cert) {
-            Ok(doip_proofs) => {
-                let mut key_verified_proofs = KeyVerifiedProofs {
-                    fingerprint: cert.fingerprint().to_hex(),
-                    user_id_proofs: Vec::new(),
-                };
+        let doip_proofs = get_keys_doip_proofs(&cert)?;
+        let mut key_verified_proofs = KeyVerifiedProofs {
+            fingerprint: cert.fingerprint().to_hex(),
+            user_id_proofs: Vec::new(),
+        };
 
-                for (user_id, proofs) in doip_proofs {
-                    let user_id_name = user_id.name().unwrap_or(None).unwrap_or("".to_string());
-                    let user_id_email = user_id.email().unwrap_or(None).unwrap_or("".to_string());
-                    let user_id_string = format!("{user_id_name} <{user_id_email}>");
+        for (user_id, proofs) in doip_proofs {
+            let user_id_name = user_id.name().unwrap_or(None).unwrap_or("".to_string());
+            let user_id_email = user_id.email().unwrap_or(None).unwrap_or("".to_string());
+            let user_id_string = format!("{user_id_name} <{user_id_email}>");
 
-                    let mut verified_proofs = UserIDVerifiedProofs {
-                        userid: user_id_string,
-                        proofs: Vec::new(),
-                    };
+            let mut verified_proofs = UserIDVerifiedProofs {
+                userid: user_id_string,
+                proofs: Vec::new(),
+            };
 
-                    for proof in proofs {
-                        let mut claim =
-                            Claim::new(proof.clone(), key_verified_proofs.fingerprint.clone());
-                        claim.find_match();
-                        claim.verify().await;
-                        #[allow(clippy::map_clone, clippy::redundant_clone)]
-                        verified_proofs.proofs.push(VerifiedProof {
-                            uri: proof,
-                            verification_result: claim.get_verification_result().map(|t| t.clone()),
-                        });
-                    }
-
-                    key_verified_proofs.user_id_proofs.push(verified_proofs);
-                    key_verified_proofs
-                        .user_id_proofs
-                        .sort_by(|a, b| b.userid.cmp(&a.userid));
-                }
-                if pretty_print {
-                    println!("{key_verified_proofs:?}");
-                } else {
-                    println!("{key_verified_proofs}");
-                }
+            for proof in proofs {
+                let mut claim = Claim::new(proof.clone(), key_verified_proofs.fingerprint.clone());
+                claim.find_match();
+                claim.verify().await;
+                #[allow(clippy::map_clone, clippy::redundant_clone)]
+                verified_proofs.proofs.push(VerifiedProof {
+                    uri: proof,
+                    verification_result: claim.get_verification_result().map(|t| t.clone()),
+                });
             }
-            Err(error) => {
-                return Err(GenericDoipError {
-                    doip_error_message: error,
-                }
-                .into())
-            }
+
+            key_verified_proofs.user_id_proofs.push(verified_proofs);
+            key_verified_proofs
+                .user_id_proofs
+                .sort_by(|a, b| b.userid.cmp(&a.userid));
+        }
+        if pretty_print {
+            println!("{key_verified_proofs:?}");
+        } else {
+            println!("{key_verified_proofs}");
         }
     }
 
