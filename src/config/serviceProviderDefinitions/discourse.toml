@@ -4,8 +4,8 @@ shortname = "discourse"
 homepage = "https://www.discourse.org"
 
 [profile]
-display = "{claim_uri_2}@{claim_uri_1}"
-uri = "https://{claim_uri_1}/u/{claim_uri_2}"
+display = "{{ claim_uri.parts.1 }}@{{ claim_uri.parts.0 }}"
+uri = "https://{{ claim_uri.parts.0 }}/u/{{ claim_uri.parts.1 }}"
 
 [claim]
 uri = '^https://(.*)/u/(.*)/?'
@@ -14,7 +14,7 @@ uri_is_ambiguous = true
 [proof]
 
 [proof.request]
-uri = "https://{claim_uri_1}/u/{claim_uri_2}.json"
+uri = "https://{{ claim_uri.parts.0 }}/u/{{ claim_uri.parts.1 }}.json"
 protocol = "http"
 access_restrictions = "none"
 
@@ -22,6 +22,5 @@ access_restrictions = "none"
 format = "json"
 
 [proof.target]
-format = "fingerprint"
 relation = "contains"
 path = ["user", "bio_raw"]

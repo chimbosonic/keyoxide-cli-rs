@@ -4,8 +4,8 @@ shortname = "twitter"
 homepage = "https://twitter.com"
 
 [profile]
-display = "@{claim_uri_1}"
-uri = "https://twitter.com/{claim_uri_1}/status/{claim_uri_2}"
+display = "@{{ claim_uri.parts.0 }}"
+uri = "https://twitter.com/{{ claim_uri.parts.0 }}/status/{{ claim_uri.parts.1 }}"
 
 [claim]
 uri = '^https://twitter.com/(.*)/status/([0-9]*)(?:\?.*)?'
@@ -14,14 +14,13 @@ uri_is_ambiguous = false
 [proof]
 
 [proof.request]
-uri = "https://twitter.com/{claim_uri_1}/status/{claim_uri_2}"
+uri = "https://publish.twitter.com/oembed?url={{ claim_uri.full | url_encode }}&omit_script=1"
 protocol = "http"
 access_restrictions = "none"
 
 [proof.response]
-format = "plaintext"
+format = "json"
 
 [proof.target]
-format = "fingerprint"
 relation = "contains"
-path = []
+path = ['html']

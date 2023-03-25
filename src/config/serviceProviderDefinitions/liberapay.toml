@@ -4,8 +4,8 @@ shortname = "liberapay"
 homepage = "https://liberapay.com"
 
 [profile]
-display = "{claim_uri_1}"
-uri = "https://liberapay.com/{claim_uri_1}"
+display = "{{ claim_uri.parts.0 }}"
+uri = "https://liberapay.com/{{ claim_uri.parts.0 }}"
 
 [claim]
 uri = '^https://liberapay.com/(.*)/?'
@@ -14,7 +14,7 @@ uri_is_ambiguous = false
 [proof]
 
 [proof.request]
-uri = "https://liberapay.com/{claim_uri_1}/public.json"
+uri = "https://liberapay.com/{{ claim_uri.parts.0 }}/public.json"
 protocol = "http"
 access_restrictions = "none"
 
@@ -22,6 +22,5 @@ access_restrictions = "none"
 format = "json"
 
 [proof.target]
-format = "uri"
 relation = "contains"
 path = ["statements", "content"]
