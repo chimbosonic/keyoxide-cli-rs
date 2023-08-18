@@ -8,15 +8,15 @@ description = "CLI interface to doip-rs library."
 keywords = ["openpgp", "cli", "keyoxide", "doip"]
 
 [dependencies]
-clap = { version = "4.1.8", features = ["derive"] }
+clap = { version = "4.3.22", features = ["derive"] }
 display_json = "0.2.1"
-doip = { git = "https://codeberg.org/keyoxide/doip-rs.git", branch = "dev", version = "0.1.0" }
-miette = { version = "5.5.0", features = ["fancy"] }
-sequoia-openpgp = "1.13.0"
-serde = "1.0.153"
-serde_json = "1.0.94"
-thiserror = "1.0.39"
-tokio = "1.26.0"
+doip = { git = "https://codeberg.org/chimbosonic/doip-rs.git", branch = "defaultServiceProviderConfigs", version = "0.1.0" }
+miette = { version = "5.10.0", features = ["fancy"] }
+sequoia-openpgp = "1.16.0"
+serde = "1.0.183"
+serde_json = "1.0.105"
+thiserror = "1.0.47"
+tokio = "1.32.0"
 
 [[bin]]
 name = "keyoxide"

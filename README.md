@@ -12,9 +12,6 @@ cargo install --path .
 ```
 
 ## Usage
-Currently to run verification you need `src/config/serviceProviderDefinitions` in your path from where you execute the tool.
-This is due to how serviceProviders are defined this will soon be fixed.
-
 ```bash
 keyoxide --help
 CLI interface to Keyoxide's doip-rs Library.
@@ -34,4 +31,11 @@ Options:
           Print help
   -V, --version
           Print version
+```
+
+# Testing
+I built a simple testing framework using `Make` and [jd](https://github.com/josephburnett/jd)
+to run the full set of tests use:
+```bash
+make test
 ```
