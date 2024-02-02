@@ -1,0 +1,21 @@
+use clap::Parser;
+
+#[derive(Parser, Debug)]
+#[command(author, version, about, long_about = None)]
+pub struct Args {
+    /// Uri for looking up a key can be (hkp:<email_address> || hkp:<key_fingerprint> || wkd:<email_address>)
+    #[arg(short, long, required_unless_present("input_key_file"))]
+    pub fetch_key_uri: Option<String>,
+
+    /// Domain name of keyserver used for hkp lookup. if not provided will default to keys.openpgp.org
+    #[arg(short, long, required(false))]
+    pub keyserver_domain: Option<String>,
+
+    /// Path to file containing ASCII-Armored Public Key
+    #[arg(short, long, required(false))]
+    pub input_key_file: Option<String>,
+
+    /// Pretty print output JSON
+    #[arg(short, long)]
+    pub pretty: bool,
+}
