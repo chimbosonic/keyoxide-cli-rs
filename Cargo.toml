@@ -11,12 +11,17 @@ keywords = ["openpgp", "cli", "keyoxide", "doip"]
 clap = { version = "4.4.5", features = ["derive"] }
 display_json = "0.2.1"
 doip = { git = "https://codeberg.org/keyoxide/doip-rs.git", branch = "dev", version = "0.1.0" }
+aspe-rs = {git = "https://codeberg.org/keyoxide/aspe-rs.git", branch = "main", version = "0.1.0" }
 miette = { version = "5.10.0", features = ["fancy"] }
 sequoia-openpgp = "1.16.1"
 serde = "1.0.188"
 serde_json = "1.0.107"
 thiserror = "1.0.48"
 tokio = "1.32.0"
+reqwest = "0.11.24"
+josekit = "0.8.5"
+bytes = "1.5.0"
+aspe-server-rs = { git = "https://codeberg.org/keyoxide/aspe-server-rs.git", version = "0.2.0" }
 
 [[bin]]
 name = "keyoxide"

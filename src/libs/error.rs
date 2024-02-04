@@ -34,9 +34,14 @@ pub enum AppError {
         message: &'static str,
     },
 
-    #[error("Sorry this code path is Unimplemented")]
+    #[error("Failed to Read Key File")]
     #[diagnostic(code(E0002))]
     FailedToReadKeyFile(#[from] io::Error),
+
+
+    #[error("Failed to parse AspeUri please check format")]
+    #[diagnostic(code(E0003))]
+    FailedToParseAspeUri,
 }
 
 #[derive(Error, Diagnostic, Debug)]
