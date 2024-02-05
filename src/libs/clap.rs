@@ -22,4 +22,8 @@ pub struct Args {
     /// Pretty print output JSON
     #[arg(short, long)]
     pub pretty: bool,
+
+    /// Pretty print output JSON
+    #[arg(short, long)]
+    pub skip_verify_ssl: bool,
 }

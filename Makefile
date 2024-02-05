@@ -83,3 +83,9 @@ update-test-doip-data:
 #Update test ouput data for ietf sample key
 update-ietf-sample-data:
 	$(bin) -i $(ietf_sample_key_file) $(bin_args) > $(test_expected_ouputs_dir)/ietf_sample.json
+
+create-test-aspe-server-cert:
+	cd $(test_dir)/aspe && openssl req -x509 -newkey rsa:4096 -nodes -sha256 -keyout key.pem -out cert.pem -days 365 
+
+start-test-aspe-server:
+	cd $(test_dir)/aspe && openssl s_server -key key.pem -cert cert.pem -accept 443 -WWW -cipher kRSA+kRSA 

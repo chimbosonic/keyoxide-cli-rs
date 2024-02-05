@@ -39,7 +39,7 @@ async fn main() -> Result<()> {
     }
 
     if let Some(aspe_uri) = args.apse_uri {
-        return get_aspe_profile_and_verify(aspe_uri).await;
+        return get_aspe_profile_and_verify(aspe_uri, args.skip_verify_ssl).await;
     }
 
     match args.input_key_file {
@@ -48,21 +48,23 @@ async fn main() -> Result<()> {
     }
 }
 
-async fn get_aspe_profile_and_verify(aspe_uri: String) -> Result<()> {
+async fn get_aspe_profile_and_verify(aspe_uri: String, skip_verify_ssl: bool) -> Result<()> {
     let aspe_uri: AspeUri = AspeUri::from_str(&aspe_uri).map_err(|_| AppError::FailedToParseAspeUri)?;
-    let client = reqwest::Client::new();
+    // let client = reqwest::Client::new();
+    
 
     let url = format!("https://{}{}{}", &aspe_uri.domain_part, constants::GET_ID_URL_PATH, &aspe_uri.local_part);
-    let req = client
+    let res = reqwest::Client::builder()
+        .danger_accept_invalid_certs(skip_verify_ssl)
+        .build()
+        .unwrap()
         .get(url)
         .header(reqwest::header::CONTENT_TYPE, constants::JWS_MIME)
-        .build().unwrap();
-
-    let res = client.execute(req).await;
-
-    let res = res.unwrap();
+        .send().await.unwrap();
+    
     let data = res.text().await.unwrap();
     println!("{data:?}");
+
     parse_and_verify_request_jws(&data); 
 
     Ok(()) 
