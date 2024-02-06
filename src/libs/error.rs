@@ -2,7 +2,7 @@ use doip::error::DoipError;
 
 use miette::{Diagnostic, IntoDiagnostic, ReportHandler};
 use std::{
-    fmt,
+    env, fmt,
     io::{self, prelude::*, stderr},
 };
 use thiserror::Error;
@@ -38,35 +38,51 @@ pub enum AppError {
     #[diagnostic(code(E0002))]
     FailedToReadKeyFile(#[from] io::Error),
 
-
     #[error("Failed to parse AspeUri please check format")]
     #[diagnostic(code(E0003))]
     FailedToParseAspeUri,
+
+    #[error("Failed to parse aspe JWT")]
+    #[diagnostic(code(E0004))]
+    AspeJWTInvalid,
+
+    #[error("Failed to fetch aspe JWT")]
+    #[diagnostic(code(E0004))]
+    FailedToFetchAspeJWT(#[from] reqwest::Error),
 }
 
 #[derive(Error, Diagnostic, Debug)]
-#[error("Failed to verify {truncated_proof:?} for {userid:?} due to {doip_error:?}")]
+#[error("Failed to verify {truncated_service_uri:?} for {proof_uri:?} due to {doip_error:?}")]
 #[diagnostic(code(W0003), severity(Warning))]
 pub struct ProofError {
-    userid: String,
-    truncated_proof: String,
+    proof_uri: String,
+    truncated_service_uri: String,
     doip_error: DoipError,
 }
 
 impl ProofError {
     pub fn warn_proof_errors(&self) {
-        writeln!(stderr(), "{}", DisplayDiagnostic(self))
-            .into_diagnostic()
-            .unwrap();
+        match env::var_os("RUST_LOG") {
+            Some(rust_log) => {
+                if !rust_log.eq_ignore_ascii_case("off") {
+                    writeln!(stderr(), "{}", DisplayDiagnostic(self))
+                        .into_diagnostic()
+                        .unwrap()
+                }
+            }
+            _ => writeln!(stderr(), "{}", DisplayDiagnostic(self))
+                .into_diagnostic()
+                .unwrap(),
+        }
     }
 
-    pub fn from(proof: String, userid: String, doip_error: DoipError) -> Self {
-        let mut truncated_proof = proof;
-        truncated_proof.truncate(30);
+    pub fn from(proof_uri: String, service_uri: String, doip_error: DoipError) -> Self {
+        let mut truncated_service_uri = service_uri;
+        truncated_service_uri.truncate(30);
 
         ProofError {
-            userid,
-            truncated_proof,
+            proof_uri,
+            truncated_service_uri,
             doip_error,
         }
     }

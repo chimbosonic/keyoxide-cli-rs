@@ -4,7 +4,7 @@ CAUTION THIS IS A WORK IN PROGRESS AND COULD END UP MOVING
 
 CLI interface to doip-rs library written in rust.
 
-Currently this uses `doip = { git = "https://codeberg.org/keyoxide/doip-rs.git", branch = "dev", version = "0.1.0" }`
+Currently this uses `doip = { git = "https://codeberg.org/chimbosonic/doip-rs.git", branch = "ASPSupport", version = "0.1.0" }`
 
 ## Install
 
@@ -20,7 +20,7 @@ cargo install --path .
 keyoxide --help
 CLI interface to Keyoxide's doip-rs Library.
 
-Usage: keyoxide-cli [OPTIONS]
+Usage: keyoxide [OPTIONS]
 
 Options:
   -f, --fetch-key-uri <FETCH_KEY_URI>

@@ -1,107 +1,118 @@
-use aspe_rs::asp_profile::AspProfile;
-use aspe_rs::aspe_uri::AspeUri;
-use aspe_rs::constants;
 use clap::Parser;
 use doip::keys::openpgp::{fetch_hkp, fetch_wkd, read_key_from_string};
-use josekit::jwk::Jwk;
+use libs::aspe::jose::{fetch_jwt, parse_jws_and_generate_verified_asp_profile};
 use miette::Result;
 use sequoia_openpgp::Cert;
-use serde_json::{Map, Value};
-use std::fs;
-use std::io::{Read};
-use bytes::Bytes;
-use std::str::FromStr;
-use josekit::jwt;
+use std::{env, fs};
 
 mod libs;
-use libs::clap::Args;
-use libs::doip::KeyVerifiedProofs;
+use libs::clap::{Args, PrintFormat};
 use libs::error::AppError;
-
-use crate::libs::aspe::parse_and_verify_request_jws;
-
+use libs::openpgp::KeyVerifiedProofs;
 
 #[tokio::main]
 async fn main() -> Result<()> {
     let args = Args::parse();
 
+    if args.quiet {
+        env::set_var("RUST_LOG", "off");
+    }
+
     if let Some(key_uri) = args.fetch_key_uri {
         return match &key_uri[..4] {
             "hkps:" | "hkp:" => {
-                get_key_via_hkp_and_verify(key_uri, args.keyserver_domain, args.pretty)
-                    .await
-            },
-            "wkd:" => {
-                get_key_via_wkd_and_verify(key_uri, args.pretty).await
-            },
+                get_key_via_hkp_and_verify(key_uri, args.keyserver_domain, &args.print_format).await
+            }
+            "wkd:" => get_key_via_wkd_and_verify(key_uri, &args.print_format).await,
             _ => Err(AppError::KeyURIMalformed.into()),
         };
     }
 
     if let Some(aspe_uri) = args.apse_uri {
-        return get_aspe_profile_and_verify(aspe_uri, args.skip_verify_ssl).await;
+        return get_aspe_profile_and_verify(aspe_uri, args.skip_verify_ssl, &args.print_format)
+            .await;
     }
 
     match args.input_key_file {
-        Some(key_path) => get_key_from_file_and_verify(key_path, args.pretty).await,
+        Some(key_path) => get_key_from_file_and_verify(key_path, &args.print_format).await,
         None => Err(AppError::KeyNotProvided.into()),
     }
 }
 
-async fn get_aspe_profile_and_verify(aspe_uri: String, skip_verify_ssl: bool) -> Result<()> {
-    let aspe_uri: AspeUri = AspeUri::from_str(&aspe_uri).map_err(|_| AppError::FailedToParseAspeUri)?;
-    // let client = reqwest::Client::new();
-    
-
-    let url = format!("https://{}{}{}", &aspe_uri.domain_part, constants::GET_ID_URL_PATH, &aspe_uri.local_part);
-    let res = reqwest::Client::builder()
-        .danger_accept_invalid_certs(skip_verify_ssl)
-        .build()
-        .unwrap()
-        .get(url)
-        .header(reqwest::header::CONTENT_TYPE, constants::JWS_MIME)
-        .send().await.unwrap();
-    
-    let data = res.text().await.unwrap();
-    println!("{data:?}");
-
-    parse_and_verify_request_jws(&data); 
-
-    Ok(()) 
+async fn get_aspe_profile_and_verify(
+    aspe_uri: String,
+    skip_verify_ssl: bool,
+    print_format: &PrintFormat,
+) -> Result<()> {
+    let asp_profile_jwt_string = fetch_jwt(&aspe_uri, skip_verify_ssl).await?;
+    let asp_profile =
+        parse_jws_and_generate_verified_asp_profile(&aspe_uri, &asp_profile_jwt_string)
+            .await
+            .map_err(|_e| AppError::FailedToParseAspeUri)?;
+    asp_profile.print(print_format);
+    Ok(())
 }
 
-async fn get_key_from_file_and_verify(key_path: String, pretty_print: bool) -> Result<()> {
+async fn get_key_from_file_and_verify(key_path: String, print_format: &PrintFormat) -> Result<()> {
     let file_contents: Result<String> = match fs::read_to_string(key_path) {
         Ok(s) => Ok(s),
         Err(error) => Err(AppError::FailedToReadKeyFile(error).into()),
     };
-
     let cert = read_key_from_string(&file_contents?)?;
-    verify_doip_proofs_and_print_results(vec![cert], pretty_print).await?;
+    verify_doip_proofs_and_print_results(vec![cert], print_format).await?;
     Ok(())
 }
 
-async fn get_key_via_wkd_and_verify(key_uri: String, pretty_print: bool) -> Result<()> {
+async fn get_key_via_wkd_and_verify(key_uri: String, print_format: &PrintFormat) -> Result<()> {
     let certs = fetch_wkd(&key_uri[4..]).await?;
-    verify_doip_proofs_and_print_results(certs, pretty_print).await?;
+    verify_doip_proofs_and_print_results(certs, print_format).await?;
     Ok(())
 }
 
 async fn get_key_via_hkp_and_verify(
     key_uri: String,
     key_server: Option<String>,
-    pretty_print: bool,
+    print_format: &PrintFormat,
 ) -> Result<()> {
     let certs = fetch_hkp(&key_uri[4..], key_server.as_deref()).await?;
-    verify_doip_proofs_and_print_results(certs, pretty_print).await?;
+    verify_doip_proofs_and_print_results(certs, print_format).await?;
     Ok(())
 }
 
-async fn verify_doip_proofs_and_print_results(certs: Vec<Cert>, pretty_print: bool) -> Result<()> {
+async fn verify_doip_proofs_and_print_results(
+    certs: Vec<Cert>,
+    print_format: &PrintFormat,
+) -> Result<()> {
     for cert in certs {
         let key_verified_proofs = KeyVerifiedProofs::new(cert).await?;
-        key_verified_proofs.print(pretty_print);
+        key_verified_proofs.print(print_format);
     }
 
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[tokio::test]
+    async fn aspe() {
+        get_aspe_profile_and_verify(
+            "aspe:keyoxide.org:TOICV3SYXNJP7E4P5AOK5DHW44".to_string(),
+            false,
+            &PrintFormat::Text,
+        )
+        .await
+        .unwrap();
+    }
+
+    #[tokio::test]
+    async fn openpgp_wkd() {
+        get_key_via_wkd_and_verify(
+            "wkd:alexis.lowe@chimbosonic.com".to_string(),
+            &PrintFormat::Text,
+        )
+        .await
+        .unwrap();
+    }
 }
