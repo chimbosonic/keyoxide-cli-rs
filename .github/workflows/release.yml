@@ -1,0 +1,76 @@
+name: release
+on:
+  push:
+    tags:
+      - 'v*'
+
+env:
+  CARGO_TERM_COLOR: always
+jobs:
+  build-stable-x86_64-unknown-linux-gnu:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: stable
+          target: x86_64-unknown-linux-gnu
+      
+      - run: sudo apt-get install -y nettle-dev
+      - run: cargo build --release
+
+      - name: Package stable-x86_64-unknown-linux-gnu release
+        run: |
+          tar -cvzf keyoxide-stable-x86_64-unknown-linux-gnu.tar.gz README.md LICENSE -C ./target/release keyoxide 
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: keyoxide-stable-x86_64-unknown-linux-gnu
+          path: keyoxide-stable-x86_64-unknown-linux-gnu.tar.gz
+    
+  build-stable-x86_64-apple-darwin:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: stable
+          target: x86_64-apple-darwin
+
+      - run: brew install nettle
+      - run: cargo build --release
+
+      - name: Package stable-x86_64-apple-darwin release
+        run: |
+          tar -cvzf keyoxide-stable-x86_64-apple-darwin.tar.gz README.md LICENSE -C ./target/release keyoxide 
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: keyoxide-stable-x86_64-apple-darwin
+          path: keyoxide-stable-x86_64-apple-darwin.tar.gz
+
+  create-release:
+    needs: [build-stable-x86_64-unknown-linux-gnu,build-stable-x86_64-apple-darwin]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download Darwin Build
+        uses: actions/download-artifact@v4
+        with:
+          name: keyoxide-stable-x86_64-apple-darwin
+          path:  ${{ github.workspace }}/builds/
+
+      - name: Download Linux Build
+        uses: actions/download-artifact@v4
+        with:
+          name: keyoxide-stable-x86_64-unknown-linux-gnu
+          path:  ${{ github.workspace }}/builds/
+
+      - uses: marvinpinto/action-automatic-releases@latest
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          prerelease: false
+          draft: false
+          files: |
+            ${{ github.workspace }}/builds/*

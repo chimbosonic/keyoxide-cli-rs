@@ -6,6 +6,13 @@ CLI interface to doip-rs library written in rust.
 
 Currently this uses `doip = { git = "https://codeberg.org/chimbosonic/doip-rs.git", branch = "ASPSupport", version = "0.1.0" }`
 
+# Releases and Pipeline
+There is a mirror at https://github.com/chimbosonic/keyoxide-cli-rs which has Builds and Releases with the build artifacts.
+
+You can use those if you don't want to pull and build this yourself.
+
+Currently it builds a MacOS binary and a Linux binary.
+
 ## Install
 
 Clone the repo and run the following from the repo's root:
