@@ -13,7 +13,7 @@ pub struct Args {
     #[arg(short, long, required(false))]
     pub input_key_file: Option<String>,
 
-    // APSE URI
+    /// ASP URI (aspe:<domain>:<fingerprint>)
     #[arg(short, long, required(false))]
     pub apse_uri: Option<String>,
 

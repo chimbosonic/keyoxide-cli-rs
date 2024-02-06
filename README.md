@@ -22,6 +22,7 @@ cargo install --path .
 ```
 
 ## Usage
+![demo](./demo.gif)
 
 ```bash
 keyoxide --help
