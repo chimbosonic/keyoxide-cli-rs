@@ -12,19 +12,19 @@ pub enum AppError {
     // #[error(transparent)]
     // #[diagnostic(code(my_lib::io_error))]
     // IoError(#[from] std::io::Error),
-    #[error("FETCH_KEY_URI does not match 'hkp:', 'hkps:' or 'wkd'")]
+    #[error("DOIP_PROFILE_URI does not match 'hkp:', 'hkps:', 'wkd:' or 'aspe:' pattern")]
     #[diagnostic(
         code(E0001),
-        help("Make sure `-f, --fetch-key-uri <FETCH_KEY_URI>` follows one of these patterns (hkp:<email_address> || hkp:<key_fingerprint> || wkd:<email_address>)"),
+        help("Make sure `-d, --doip-profile-uri <DOIP_PROFILE_URI>` follows one of these patterns (hkp(s):<email_address> || hkp(s):<key_fingerprint> || wkd:<email_address> || aspe:<profile_uri>)"),
     )]
-    KeyURIMalformed,
+    ProfileURIMalformed,
 
     #[error("No key was provided")]
     #[diagnostic(
         code(E0404),
-        help("Neither `-f, --fetch-key-uri <FETCH_KEY_URI>` or `-i, --input-key-file <INPUT_KEY_FILE>` was provided")
+        help("Neither `-d, --doip-profile-uri <DOIP_PROFILE_URI>` or `-i, --input-key-file <INPUT_KEY_FILE>` was provided")
     )]
-    KeyNotProvided,
+    ProfileNotProvided,
 
     #[allow(dead_code)]
     #[error("Sorry this code path is Unimplemented")]

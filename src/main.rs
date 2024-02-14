@@ -18,24 +18,20 @@ async fn main() -> Result<()> {
         env::set_var("RUST_LOG", "off");
     }
 
-    if let Some(key_uri) = args.fetch_key_uri {
-        return match &key_uri[..4] {
+    if let Some(doip_profile_uri) = args.doip_profile_uri {
+        return match &doip_profile_uri[..5] {
             "hkps:" | "hkp:" => {
-                get_key_via_hkp_and_verify(key_uri, args.keyserver_domain, &args.print_format).await
+                get_key_via_hkp_and_verify(doip_profile_uri, args.keyserver_domain, &args.print_format).await
             }
-            "wkd:" => get_key_via_wkd_and_verify(key_uri, &args.print_format).await,
-            _ => Err(AppError::KeyURIMalformed.into()),
+            "wkd:" => get_key_via_wkd_and_verify(doip_profile_uri, &args.print_format).await,
+            "aspe:" => get_aspe_profile_and_verify(doip_profile_uri, args.skip_verify_ssl, &args.print_format).await,
+            _ => Err(AppError::ProfileURIMalformed.into()),
         };
-    }
-
-    if let Some(aspe_uri) = args.apse_uri {
-        return get_aspe_profile_and_verify(aspe_uri, args.skip_verify_ssl, &args.print_format)
-            .await;
     }
 
     match args.input_key_file {
         Some(key_path) => get_key_from_file_and_verify(key_path, &args.print_format).await,
-        None => Err(AppError::KeyNotProvided.into()),
+        None => Err(AppError::ProfileNotProvided.into()),
     }
 }
 
@@ -74,7 +70,8 @@ async fn get_key_via_hkp_and_verify(
     key_server: Option<String>,
     print_format: &PrintFormat,
 ) -> Result<()> {
-    let certs = fetch_hkp(&key_uri[4..], key_server.as_deref()).await?;
+    let identifier = key_uri.split_once(":").ok_or(AppError::ProfileURIMalformed)?.1;
+    let certs = fetch_hkp(identifier, key_server.as_deref()).await?;
     verify_doip_proofs_and_print_results(certs, print_format).await?;
     Ok(())
 }
@@ -115,4 +112,49 @@ mod tests {
         .await
         .unwrap();
     }
+
+    #[tokio::test]
+    async fn openpgp_hkp_fingerprint() {
+        get_key_via_hkp_and_verify(
+            "hkp:3637202523E7C1309AB79E99EF2DC5827B445F4B".to_string(),
+            None,
+            &PrintFormat::Text,
+        )
+        .await
+        .unwrap();
+    }
+
+    #[tokio::test]
+    async fn openpgp_hkp_email() {
+        get_key_via_hkp_and_verify(
+            "hkp:test@doip.rocks".to_string(),
+            None,
+            &PrintFormat::Text,
+        )
+        .await
+        .unwrap();
+    }
+
+    #[tokio::test]
+    async fn openpgp_hkps() {
+        get_key_via_hkp_and_verify(
+            "hkp:3637202523E7C1309AB79E99EF2DC5827B445F4B".to_string(),
+            None,
+            &PrintFormat::Text,
+        )
+        .await
+        .unwrap();
+    }
+
+
+    #[tokio::test]
+    async fn openpgp_from_file() {
+        get_key_from_file_and_verify(
+            "__tests__/data/IETF_SAMPLE_PUBLIC_KEY_WITH_NOTATIONS.asc".to_string(),
+            &PrintFormat::Text,
+        )
+        .await
+        .unwrap();
+    }
+
 }
