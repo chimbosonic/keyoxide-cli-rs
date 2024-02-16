@@ -13,7 +13,6 @@ pub struct Args {
     #[arg(short, long, required(false))]
     pub input_key_file: Option<String>,
 
-
     ///Print Format
     #[clap(value_enum, default_value_t)]
     #[arg(short, long)]
