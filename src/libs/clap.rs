@@ -1,3 +1,5 @@
+use super::doip::PrintFormat;
+
 #[derive(clap::Parser, Debug)]
 #[command(author, version, about, long_about = None)]
 pub struct Args {
@@ -25,12 +27,4 @@ pub struct Args {
     /// Set Logging to Quiet
     #[arg(short, long)]
     pub quiet: bool,
-}
-
-#[derive(clap::ValueEnum, Clone, Debug, Default)]
-pub enum PrintFormat {
-    Json,
-    JsonPretty,
-    #[default]
-    Text,
 }

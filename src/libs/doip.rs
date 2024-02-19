@@ -7,6 +7,18 @@ use serde::Serialize;
 
 use super::error::ProofError;
 
+#[derive(clap::ValueEnum, Clone, Debug, Default)]
+pub enum PrintFormat {
+    Json,
+    JsonPretty,
+    #[default]
+    Text,
+}
+
+pub trait Profile {
+    fn print(&self, print_format: &PrintFormat);
+}
+
 #[derive(Serialize, DisplayAsJson, DebugAsJsonPretty)]
 pub struct VerifiedProof {
     pub uri: String,

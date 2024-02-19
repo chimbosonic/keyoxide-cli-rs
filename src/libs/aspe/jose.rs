@@ -5,18 +5,14 @@ use josekit::{
 };
 
 use crate::libs::error::AppError;
-
-use super::profile::AspProfile;
-
 use aspe_rs::aspe_uri::AspeUri;
 use aspe_rs::constants;
 use miette::Result;
 use std::str::FromStr;
 
 pub async fn parse_jws_and_generate_verified_asp_profile(
-    profile_uri: &str,
     request_jws_str: &str,
-) -> Result<AspProfile, AppError> {
+) -> Result<JwtPayload, AppError> {
     let profile_jwk = match extract_jwk_from_jwt(request_jws_str) {
         Some(x) => x,
         None => return Err(AppError::AspeJWTInvalid),
@@ -29,7 +25,7 @@ pub async fn parse_jws_and_generate_verified_asp_profile(
                 .map_err(|_| AppError::AspeJWTInvalid)?;
             let (verified_payload, _verified_header) =
                 verify_and_get_jwt_payload(&verifier, request_jws_str)?;
-            Ok(AspProfile::from_jwt(profile_uri, verified_payload).await)
+            Ok(verified_payload)
         }
         Some("P-256") => {
             let verifier = EcdsaJwsAlgorithm::Es256
@@ -37,7 +33,7 @@ pub async fn parse_jws_and_generate_verified_asp_profile(
                 .map_err(|_| AppError::AspeJWTInvalid)?;
             let (verified_payload, _verified_header) =
                 verify_and_get_jwt_payload(&verifier, request_jws_str)?;
-            Ok(AspProfile::from_jwt(profile_uri, verified_payload).await)
+            Ok(verified_payload)
         }
         _ => Err(AppError::AspeJWTInvalid),
     }
