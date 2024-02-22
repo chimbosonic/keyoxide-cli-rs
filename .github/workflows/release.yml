@@ -6,65 +6,41 @@ on:
 
 env:
   CARGO_TERM_COLOR: always
-jobs:
-  build-stable-x86_64-unknown-linux-gnu:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      
-      - uses: dtolnay/rust-toolchain@stable
-        with:
-          toolchain: stable
-          target: x86_64-unknown-linux-gnu
-      
-      - run: sudo apt-get install -y nettle-dev
-      - run: cargo build --release
-
-      - name: Package stable-x86_64-unknown-linux-gnu release
-        run: |
-          tar -cvzf keyoxide-stable-x86_64-unknown-linux-gnu.tar.gz README.md LICENSE -C ./target/release keyoxide 
-
-      - uses: actions/upload-artifact@v4
-        with:
-          name: keyoxide-stable-x86_64-unknown-linux-gnu
-          path: keyoxide-stable-x86_64-unknown-linux-gnu.tar.gz
+jobs:  
+  build-linux-targets:
+    name: Build targets
+    uses: ./.github/workflows/_build_linux_target.yml
+    strategy:
+      matrix:
+        target: [x86_64-unknown-linux-gnu]
+    with:
+      target: ${{ matrix.target }}
+      channel: stable
+  build-macos-targets:
+    name: Build targets
+    uses: ./.github/workflows/_build_macos_target.yml
+    strategy:
+      matrix:
+        include:
+          - target: x86_64-apple-darwin
+            os: macos-latest
+          - target: aarch64-apple-darwin
+            os: macos-14
+    with:
+      target: ${{ matrix.target }}
+      channel: stable
+      os: ${{ matrix.os }}
     
-  build-stable-x86_64-apple-darwin:
-    runs-on: macos-latest
-    steps:
-      - uses: actions/checkout@v4
-      
-      - uses: dtolnay/rust-toolchain@stable
-        with:
-          toolchain: stable
-          target: x86_64-apple-darwin
-
-      - run: brew install nettle
-      - run: cargo build --release
-
-      - name: Package stable-x86_64-apple-darwin release
-        run: |
-          tar -cvzf keyoxide-stable-x86_64-apple-darwin.tar.gz README.md LICENSE -C ./target/release keyoxide 
-
-      - uses: actions/upload-artifact@v4
-        with:
-          name: keyoxide-stable-x86_64-apple-darwin
-          path: keyoxide-stable-x86_64-apple-darwin.tar.gz
 
   create-release:
-    needs: [build-stable-x86_64-unknown-linux-gnu,build-stable-x86_64-apple-darwin]
+    needs: [build-linux-targets, build-macos-targets]
     runs-on: ubuntu-latest
     steps:
-      - name: Download Darwin Build
+      - name: Download Artifacts
         uses: actions/download-artifact@v4
         with:
-          name: keyoxide-stable-x86_64-apple-darwin
-          path:  ${{ github.workspace }}/builds/
-
-      - name: Download Linux Build
-        uses: actions/download-artifact@v4
-        with:
-          name: keyoxide-stable-x86_64-unknown-linux-gnu
+          pattern: keyoxide-*
+          merge-multiple: true
           path:  ${{ github.workspace }}/builds/
 
       - uses: marvinpinto/action-automatic-releases@latest

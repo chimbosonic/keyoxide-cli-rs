@@ -1,0 +1,48 @@
+name: build_target
+
+on:  
+  workflow_call:
+    inputs:
+      target: 
+        type: string
+        description: 'Build target'
+        required: true
+      channel: 
+        type: string
+        description: 'Build target'
+        required: false
+        default: 'stable'
+
+env:
+  CARGO_TERM_COLOR: always
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust
+        run: rustup update ${{inputs.channel}}
+      
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: stable
+          targets: ${{inputs.target}}
+
+      - run: sudo apt-get install -y nettle-dev
+
+      - run: cargo build --release --target ${{inputs.target}}
+
+      - name: Test build
+        run: |
+          ./target/${{inputs.target}}/release/keyoxide --version
+
+      - name: Package ${{inputs.channel}}-${{inputs.target}}
+        run: |
+          tar -cvzf keyoxide-${{inputs.channel}}-${{inputs.target}}.tar.gz README.md LICENSE -C ./target/${{inputs.target}}/release keyoxide 
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: keyoxide-${{inputs.channel}}-${{inputs.target}}
+          path: keyoxide-${{inputs.channel}}-${{inputs.target}}.tar.gz
+  

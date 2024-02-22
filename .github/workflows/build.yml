@@ -16,9 +16,8 @@ jobs:
       - uses: dtolnay/rust-toolchain@stable
         with:
           toolchain: stable
-      - run: sudo apt-get install -y nettle-dev
+      - run: sudo apt-get install -y nettle-dev libssl-dev
       - run: cargo check
-
   test:
     name: Test Suite
     runs-on: ubuntu-latest
@@ -27,9 +26,8 @@ jobs:
       - uses: dtolnay/rust-toolchain@stable
         with:
           toolchain: stable
-      - run: sudo apt-get install -y nettle-dev
+      - run: sudo apt-get install -y nettle-dev libssl-dev libgmp-dev
       - run: cargo test
-
   fmt:
     name: Rustfmt
     runs-on: ubuntu-latest
@@ -39,16 +37,28 @@ jobs:
         with:
           toolchain: stable
           components: rustfmt
-      - run: sudo apt-get install -y nettle-dev
+      - run: sudo apt-get install -y nettle-dev libssl-dev libgmp-dev
       - run: cargo fmt --all -- --check
-
-  build:
-    name: Build
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - run: sudo apt-get install -y nettle-dev
-      - uses: dtolnay/rust-toolchain@stable
-        with:
-          toolchain: stable
-      - run: cargo build --release
+  build-linux-targets:
+    name: Build targets
+    uses: ./.github/workflows/_build_linux_target.yml
+    strategy:
+      matrix:
+        target: [x86_64-unknown-linux-gnu]
+    with:
+      target: ${{ matrix.target }}
+      channel: stable
+  build-macos-targets:
+    name: Build targets
+    uses: ./.github/workflows/_build_macos_target.yml
+    strategy:
+      matrix:
+        include:
+          - target: x86_64-apple-darwin
+            os: macos-latest
+          - target: aarch64-apple-darwin
+            os: macos-14
+    with:
+      target: ${{ matrix.target }}
+      channel: stable
+      os: ${{ matrix.os }}

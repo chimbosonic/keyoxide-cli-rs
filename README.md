@@ -53,3 +53,9 @@ to run the full set of tests use:
 ```bash
 make test
 ```
+
+## Supported targets
+
+- `x86_64-unknown-linux-gnu`
+- `x86_64-apple-darwin`
+- `aarch64-apple-darwin`
