@@ -5,7 +5,7 @@ use super::{
     error::AppError,
 };
 use display_json::{DebugAsJsonPretty, DisplayAsJson};
-use doip::keys::openpgp::{fetch_hkp, fetch_wkd, get_keys_doip_proofs, read_key_from_string};
+use doip_openpgp::openpgp::{fetch_hkp, fetch_wkd, get_keys_doip_proofs, read_key_from_string};
 use futures::future::join_all;
 use miette::Result;
 use sequoia_openpgp::{packet::UserID, Cert};

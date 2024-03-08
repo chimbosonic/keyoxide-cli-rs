@@ -4,10 +4,14 @@ CAUTION THIS IS A WORK IN PROGRESS AND COULD END UP MOVING
 
 CLI interface to doip-rs library written in rust.
 
-Currently this uses `doip = { git = "https://codeberg.org/keyoxide/doip-rs.git", branch = "dev", version = "0.1.0" }`
+Currently this uses:
+`doip = { git = "https://codeberg.org/chimbosonic/doip-rs.git", branch = "openpgpSplit", version = "0.1.0" }`
+`doip-openpgp = { git = "https://codeberg.org/chimbosonic/doip-rs.git", branch = "openpgpSplit", version = "0.1.0" }`
+`aspe-rs = { git = "https://codeberg.org/keyoxide/aspe-rs.git", branch = "main", version = "0.1.0" }`
 
-# Releases and Pipeline
-There is a mirror at https://github.com/chimbosonic/keyoxide-cli-rs which has Builds and Releases with the build artifacts.
+## Releases and Pipeline
+
+There is a mirror at [https://github.com/chimbosonic/keyoxide-cli-rs](https://github.com/chimbosonic/keyoxide-cli-rs) which has Builds and Releases with the build artifacts.
 
 You can use those if you don't want to pull and build this yourself.
 
@@ -22,6 +26,7 @@ cargo install --path .
 ```
 
 ## Usage
+
 ![demo](./demo.gif)
 
 ```bash
@@ -43,15 +48,6 @@ Options:
           Print help
   -V, --version
           Print version
-```
-
-# Testing
-
-I built a simple testing framework using `Make` and [jd](https://github.com/josephburnett/jd)
-to run the full set of tests use:
-
-```bash
-make test
 ```
 
 ## Supported targets

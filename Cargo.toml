@@ -1,18 +1,19 @@
 [package]
 name = "keyoxide-cli-rs"
-version = "0.2.3"
+version = "0.2.4"
 edition = "2021"
 license = "MIT"
 authors = ["Alexis Lowe <alexis.lowe@chimbosonic.com>"]
 description = "CLI interface to doip-rs library."
-keywords = ["openpgp", "cli", "keyoxide", "doip"]
+keywords = ["openpgp", "cli", "keyoxide", "doip", "aspe"]
 
 [dependencies]
 clap = { version = "4.5.0", features = ["derive"] }
 display_json = "0.2.1"
-doip = { git = "https://codeberg.org/keyoxide/doip-rs.git", branch = "dev", version = "0.1.0" }
+doip = { git = "https://codeberg.org/chimbosonic/doip-rs.git", branch = "openpgpSplit", version = "0.1.0" }
+doip-openpgp = { git = "https://codeberg.org/chimbosonic/doip-rs.git", branch = "openpgpSplit", version = "0.1.0" }
 aspe-rs = { git = "https://codeberg.org/keyoxide/aspe-rs.git", branch = "main", version = "0.1.0" }
-miette = { version = "5.10.0", features = ["fancy"] }
+miette = { version = "7.2.0", features = ["fancy"] }
 sequoia-openpgp = "1.18.0"
 serde = "1.0.196"
 serde_json = "1.0.113"
