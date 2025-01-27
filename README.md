@@ -5,8 +5,8 @@ CAUTION THIS IS A WORK IN PROGRESS AND COULD END UP MOVING
 CLI interface to doip-rs library written in rust.
 
 Currently this uses:
-`doip = { git = "https://codeberg.org/chimbosonic/doip-rs.git", branch = "openpgpSplit", version = "0.1.0" }`
-`doip-openpgp = { git = "https://codeberg.org/chimbosonic/doip-rs.git", branch = "openpgpSplit", version = "0.1.0" }`
+`doip = { git = "https://codeberg.org/keyoxide/doip-rs.git", branch = "dev", version = "0.1.0" }`
+`doip-openpgp = { git = "https://codeberg.org/keyoxide/doip-rs.git", branch = "dev", version = "0.1.0" }`
 `aspe-rs = { git = "https://codeberg.org/keyoxide/aspe-rs.git", branch = "main", version = "0.1.0" }`
 
 ## Releases and Pipeline

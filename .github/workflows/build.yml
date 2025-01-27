@@ -55,9 +55,9 @@ jobs:
       matrix:
         include:
           - target: x86_64-apple-darwin
-            os: macos-latest
+            os: macos-13
           - target: aarch64-apple-darwin
-            os: macos-14
+            os: macos-latest
     with:
       target: ${{ matrix.target }}
       channel: stable

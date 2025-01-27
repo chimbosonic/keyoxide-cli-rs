@@ -31,8 +31,8 @@ jobs:
           toolchain: ${{inputs.channel}}
           target: ${{inputs.target}}
       
-      - run: brew install nettle
-
+      - run: brew install nettle openssl pkg-config
+      
       - run: cargo build --release --target ${{inputs.target}}
       
       - name: Test build
