@@ -16,6 +16,7 @@ jobs:
     with:
       target: ${{ matrix.target }}
       channel: stable
+
   build-macos-targets:
     name: Build targets
     uses: ./.github/workflows/_build_macos_target.yml
@@ -23,15 +24,14 @@ jobs:
       matrix:
         include:
           - target: x86_64-apple-darwin
-            os: macos-latest
+            os: macos-13
           - target: aarch64-apple-darwin
-            os: macos-14
+            os: macos-latest
     with:
       target: ${{ matrix.target }}
       channel: stable
       os: ${{ matrix.os }}
     
-
   create-release:
     needs: [build-linux-targets, build-macos-targets]
     runs-on: ubuntu-latest
