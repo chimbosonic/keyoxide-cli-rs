@@ -1,7 +1,7 @@
 use crate::libs::doip::verify_proof;
 use crate::libs::{doip::PrintFormat, doip::Profile, doip::VerifiedProof};
-use colored::customcolors::CustomColor;
 use colored::Colorize;
+use colored::customcolors::CustomColor;
 use display_json::{DebugAsJsonPretty, DisplayAsJson};
 use futures::future::join_all;
 use hex_color::HexColor;

@@ -1,30 +1,30 @@
 [package]
 name = "keyoxide-cli-rs"
-version = "0.2.5"
-edition = "2021"
+version = "0.2.6"
+edition = "2024"
 license = "MIT"
 authors = ["Alexis Lowe <alexis.lowe@chimbosonic.com>"]
 description = "CLI interface to doip-rs library."
 keywords = ["openpgp", "cli", "keyoxide", "doip", "aspe"]
 
 [dependencies]
-clap = { version = "4.5.0", features = ["derive"] }
+clap = { version = "4.5.54", features = ["derive"] }
 display_json = "0.2.1"
 doip = { git = "https://codeberg.org/keyoxide/doip-rs.git", branch = "dev", version = "0.1.0" }
 doip-openpgp = { git = "https://codeberg.org/keyoxide/doip-rs.git", branch = "dev", version = "0.1.0" }
 aspe-rs = { git = "https://codeberg.org/keyoxide/aspe-rs.git", branch = "main", version = "0.1.0" }
-miette = { version = "7.2.0", features = ["fancy"] }
+miette = { version = "7.6.0", features = ["fancy"] }
 sequoia-openpgp = "1.18.0"
-serde = "1.0.196"
-serde_json = "1.0.113"
-thiserror = "1.0.57"
-tokio = "1.36.0"
-reqwest = "0.11.24"
-josekit = "0.8.5"
-bytes = "1.5.0"
-colored = "2.1.0"
+serde = "1.0.228"
+serde_json = "1.0.149"
+thiserror = "2.0.17"
+tokio = "1.49.0"
+reqwest = "0.13.1"
+josekit = "0.10.3"
+bytes = "1.11.0"
+colored = "3.0.0"
 hex_color = "3.0.0"
-futures = "0.3.30"
+futures = "0.3.31"
 
 [[bin]]
 name = "keyoxide"

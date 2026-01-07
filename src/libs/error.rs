@@ -15,14 +15,18 @@ pub enum AppError {
     #[error("DOIP_PROFILE_URI does not match 'hkp:', 'hkps:', 'wkd:' or 'aspe:' pattern")]
     #[diagnostic(
         code(E0001),
-        help("Make sure `-d, --doip-profile-uri <DOIP_PROFILE_URI>` follows one of these patterns (hkp(s):<email_address> || hkp(s):<key_fingerprint> || wkd:<email_address> || aspe:<profile_uri>)"),
+        help(
+            "Make sure `-d, --doip-profile-uri <DOIP_PROFILE_URI>` follows one of these patterns (hkp(s):<email_address> || hkp(s):<key_fingerprint> || wkd:<email_address> || aspe:<profile_uri>)"
+        )
     )]
     ProfileURIMalformed,
 
     #[error("No key was provided")]
     #[diagnostic(
         code(E0404),
-        help("Neither `-d, --doip-profile-uri <DOIP_PROFILE_URI>` or `-i, --input-key-file <INPUT_KEY_FILE>` was provided")
+        help(
+            "Neither `-d, --doip-profile-uri <DOIP_PROFILE_URI>` or `-i, --input-key-file <INPUT_KEY_FILE>` was provided"
+        )
     )]
     ProfileNotProvided,
 

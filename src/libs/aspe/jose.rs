@@ -1,6 +1,6 @@
 use josekit::{
     jwk::Jwk,
-    jws::{alg::ecdsa::EcdsaJwsAlgorithm, alg::eddsa::EddsaJwsAlgorithm, JwsHeader, JwsVerifier},
+    jws::{JwsHeader, JwsVerifier, alg::ecdsa::EcdsaJwsAlgorithm, alg::eddsa::EddsaJwsAlgorithm},
     jwt::{self, JwtPayload},
 };
 
@@ -50,22 +50,10 @@ fn verify_and_get_jwt_payload(
 }
 
 fn extract_jwk_from_jwt(jwt_str: &str) -> Option<Jwk> {
-    let jwt_header = match jwt::decode_header(jwt_str) {
-        Ok(x) => x,
-        Err(_) => return None,
-    };
-    let jwt_header_jwk = match jwt_header.claim("jwk") {
-        Some(x) => x,
-        None => return None,
-    };
-    let jwt_header_jwk = match jwt_header_jwk.as_object() {
-        Some(x) => x,
-        None => return None,
-    };
-    match Jwk::from_map(jwt_header_jwk.to_owned()) {
-        Ok(x) => Some(x),
-        Err(_) => None,
-    }
+    let jwt_header = jwt::decode_header(jwt_str).ok()?;
+    let jwt_header_jwk = jwt_header.claim("jwk")?;
+    let jwt_header_jwk = jwt_header_jwk.as_object()?;
+    Jwk::from_map(jwt_header_jwk.to_owned()).ok()
 }
 
 pub async fn fetch_jwt(aspe_uri: &str, skip_verify_ssl: bool) -> Result<String, AppError> {

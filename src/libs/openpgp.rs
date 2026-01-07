@@ -1,14 +1,14 @@
 use std::fs;
 
 use super::{
-    doip::{verify_proof, PrintFormat, Profile, VerifiedProof},
+    doip::{PrintFormat, Profile, VerifiedProof, verify_proof},
     error::AppError,
 };
 use display_json::{DebugAsJsonPretty, DisplayAsJson};
 use doip_openpgp::openpgp::{fetch_hkp, fetch_wkd, get_keys_doip_proofs, read_key_from_string};
 use futures::future::join_all;
 use miette::Result;
-use sequoia_openpgp::{packet::UserID, Cert};
+use sequoia_openpgp::{Cert, packet::UserID};
 use serde::Serialize;
 
 #[derive(Serialize, DisplayAsJson, DebugAsJsonPretty)]

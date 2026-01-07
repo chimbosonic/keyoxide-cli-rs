@@ -14,7 +14,7 @@ async fn main() -> Result<()> {
     let args = Args::parse();
 
     if args.quiet {
-        env::set_var("RUST_LOG", "off");
+        unsafe { env::set_var("RUST_LOG", "off") };
     }
 
     if let Some(doip_profile_uri) = args.doip_profile_uri {
